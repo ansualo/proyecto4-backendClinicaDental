@@ -6,11 +6,20 @@ const PORT = 3000;
 
 const db = require('./db');
 
+const router = require('./router');
+
+
+
 app.use(express.json());
+
+app.use(router);
+
+
 
 app.get('/health', (req, res) => {
     return res.send('healthy');
 });
+
 
 
 db.then(() => {
