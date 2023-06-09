@@ -2,9 +2,12 @@ const router = require('express').Router();
 
 const roleController = require('../controllers/roleController');
 
-router.get('/', roleController.getAllRoles);
-router.post('/', roleController.createRole);
-router.put('/:id', roleController.updateRole);
-router.delete('/:id', roleController.deleteRole);
+const auth = require('../middlewares/verifyToken');
+
+
+router.get('/', auth, roleController.getAllRoles);
+router.post('/', auth, roleController.createRole);
+router.put('/:id', auth, roleController.updateRole);
+router.delete('/:id', auth, roleController.deleteRole);
 
 module.exports = router;

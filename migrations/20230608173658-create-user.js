@@ -31,6 +31,10 @@ module.exports = {
       date_of_birth: {
         type: Sequelize.STRING
       },
+      collegiate_number: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
       role_id: {
         type: Sequelize.INTEGER,
         references: {
