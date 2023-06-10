@@ -113,6 +113,84 @@ userController.getAllDentists = async (req, res) => {
     }
 }
 
+userController.getProfile = async (req, res)=> {
+
+    try {
+        const userId = req.userId;
+        
+        const profile = await User.findByPk(
+            userId, 
+            {
+                attributes: {
+                    exclude: ["id","password", "role_id", "createdAt", "updatedAt"]
+                },
+            }
+        ); 
+
+        return res.json(
+            {
+                success: true,
+                message: "Profile retrieved",
+                data: profile,
+            }
+        )
+        
+    } catch (error) {
+        return res.status(500).json(
+            {
+                success: false,
+                message: "Profile cannot be retrieved",
+                error: error.message
+            }
+        )
+    }
+
+}
+
+userController.updateProfile = async (req, res)=> {
+
+    try {
+        const userId = req.userId;
+        const { email, phone, address } = req.body
+
+        const profile = await User.update(
+            {
+                email: email, 
+                phone: phone, 
+                address: address,
+            },
+            {
+                where: {
+                    id: userId
+                }
+            }
+        )
+        const newProfile = await User.findByPk(
+            userId, 
+            {
+                attributes: {
+                    exclude: ["id", "password", "role_id", "collegiate_number", "createdAt", "updatedAt"]
+                },
+            }
+        ); 
+        return res.json(
+            {
+                success: true,
+                message: "Profile updated",
+                data: newProfile
+            }
+        )
+        
+    } catch (error) {
+        return res.status(500).json(
+            {
+                success: false,
+                message: "Profile cannot be updated",
+                error: error.message
+            }
+        )
+    }
+}
 
 
 module.exports = userController
