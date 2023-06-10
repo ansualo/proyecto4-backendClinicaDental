@@ -4,6 +4,92 @@ const appointment = require('../models/appointment');
 const appointmentController = {};
 
 
+appointmentController.getAllAppointments = async (req, res) => {
+    try {
+
+        const appointments = await Appointment.findAll()
+
+        return res.json({
+            succes: true,
+            message: "Appointments retrieved succesfully",
+            data: appointments
+        })
+
+    } catch (error) {
+        return res.status(500).json(
+            {
+                success: false,
+                message: "Appointments cannot be retrieved",
+                error: error.message
+            }
+        )
+    }
+}
+
+appointmentController.getPatientAppointments = async (req, res) => {
+    try {
+
+        const appointments = await Appointment.findAll(
+            {
+                where : {
+                    user_id_1: req.userId
+                },
+                attributes:['id', 'user_id_2', 'treatment_id','date'],
+            }
+        );
+
+        return res.json(
+                {
+                    success: true,
+                    message: "Appointments retrieved",
+                    data: appointments
+                }
+        )
+      
+    } catch (error) {
+        return res.status(500).json(
+            {
+                success: false,
+                message: "Appointments cannot the retrieved",
+                error: error.message
+            }
+        )
+    }
+}
+
+appointmentController.getDoctorAppointments = async (req, res) => {
+    try {
+
+        const appointments = await Appointment.findAll(
+            {
+                where : {
+                    user_id_2: req.userId
+                },
+                attributes:['id', 'user_id_1', 'treatment_id','date'],
+            }
+        );
+
+        return res.json(
+                {
+                    success: true,
+                    message: "Appointments retrieved",
+                    data: appointments
+                }
+        )
+      
+    } catch (error) {
+        return res.status(500).json(
+            {
+                success: false,
+                message: "Appointments cannot the retrieved",
+                error: error.message
+            }
+        )
+    }
+}
+
+
+
 appointmentController.createAppointment = async (req, res) => {
     try {
 
@@ -111,7 +197,7 @@ appointmentController.updateAppointment = async (req, res) => {
                 data: newAppointment
             }
         )
-      
+
     } catch (error) {
         return res.status(500).json(
             {
