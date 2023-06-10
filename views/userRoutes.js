@@ -12,7 +12,8 @@ router.get('/patients', auth, isDoctor, userController.getAllPatients);
 router.get('/dentists', auth, isAdmin, userController.getAllDentists);
 
 router.get('/profile', auth, userController.getProfile);
-router.post('/profile', auth, userController.updateProfile);
+router.put('/profile', auth, userController.updateProfile);
+router.delete('/profile/:id', auth, isAdmin, userController.deleteProfile);
 
 
 

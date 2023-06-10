@@ -192,5 +192,34 @@ userController.updateProfile = async (req, res)=> {
     }
 }
 
+userController.deleteProfile = async(req, res) => {
+    try {
+        const userId = req.params.id;
+
+        const deletedUser = await User.destroy({
+            where: {
+                id: userId
+            }
+        })
+        
+        return res.json(
+            {
+                success: true,
+                message: "User deleted successfully",
+                data: deletedUser
+            }
+        );
+    } catch (error) {
+        return res.status(500).json(
+            {
+                success: false,
+                message: "User cannot be deleted",
+                error: error.message
+            }
+        )
+    }
+}
+
+
 
 module.exports = userController
