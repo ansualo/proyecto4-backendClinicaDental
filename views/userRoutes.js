@@ -8,6 +8,7 @@ const auth = require('../middlewares/verifyToken');
 
 
 router.get('/patients', userController.getAllPatients);
+router.get('/dentists', userController.getAllDentists);
 
 
 
