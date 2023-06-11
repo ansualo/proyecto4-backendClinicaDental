@@ -8,9 +8,6 @@ appointmentController.getAllAppointments = async (req, res) => {
 
         const appointments = await Appointment.findAll(
             {
-                where: {
-                    user_id_1: req.userId
-                },
                 attributes: ["id", "date"],
                 include: [
                     {
