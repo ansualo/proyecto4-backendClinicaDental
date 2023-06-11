@@ -4,9 +4,11 @@ const appointmentController = require('../controllers/appointmentController');
 
 const auth = require('../middlewares/verifyToken');
 const isDoctor = require('../middlewares/isDoctor');
+const isAdmin = require('../middlewares/isAdmin');
 
 
-router.get('/all', auth, isDoctor, appointmentController.getAllAppointments);
+router.get('/all', auth, isAdmin, appointmentController.getAllAppointments);
+router.get('/patient/:id', auth, appointmentController.getOneAppointment);
 router.get('/patient', auth, appointmentController.getPatientAppointments);
 router.get('/doctor', auth, isDoctor, appointmentController.getDoctorAppointments);
 

@@ -1,5 +1,4 @@
-const { Appointment, User } = require('../models');
-const appointment = require('../models/appointment');
+const { Appointment, User, Treatment} = require('../models');
 
 const appointmentController = {};
 
@@ -26,22 +25,61 @@ appointmentController.getAllAppointments = async (req, res) => {
     }
 }
 
-appointmentController.getPatientAppointments = async (req, res) => {
+appointmentController.getOneAppointment = async (req, res) => {
     try {
+        const appointmentId = req.params.id
 
-        const appointments = await Appointment.findAll(
+        const appointment = await Appointment.findByPk( 
+            appointmentId,
             {
                 where : {
                     user_id_1: req.userId
                 },
-                attributes:['id', 'user_id_2', 'treatment_id','date'],
+                attributes:["id", "user_id_2", "date"],
+                include: [{
+                    model: Treatment,
+                    attributes: ["name", "price"]
+                }]
+            }, 
+        );
+
+
+        return res.json({
+            succes: true,
+            message: "Appointment retrieved succesfully",
+            data: appointment
+        })
+
+    } catch (error) {
+        return res.status(500).json(
+            {
+                success: false,
+                message: "Appointment cannot be retrieved",
+                error: error.message
             }
+        )
+    }
+}
+
+appointmentController.getPatientAppointments = async (req, res) => {
+    try {
+        const appointments = await Appointment.findAll( 
+            {
+                where : {
+                    user_id_1: req.userId
+                },
+                attributes:["id", "user_id_2", "date"],
+                include: [{
+                    model: Treatment,
+                    attributes: ["name", "price"]
+                }]
+            }, 
         );
 
         return res.json(
                 {
                     success: true,
-                    message: "Appointments retrieved",
+                    message: "Appointments retrieved succesfully",
                     data: appointments
                 }
         )
@@ -87,6 +125,7 @@ appointmentController.getDoctorAppointments = async (req, res) => {
         )
     }
 }
+
 
 
 
