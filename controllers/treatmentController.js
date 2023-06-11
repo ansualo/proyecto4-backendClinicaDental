@@ -6,7 +6,11 @@ const treatmentController = {};
 treatmentController.getAllTreatments = async (req, res) => {
 
     try{
-        const treatments = await Treatment.findAll();
+        const treatments = await Treatment.findAll(
+            {
+                attributes: ["id", "name", "price"],
+            }
+        );
         return res.json(
         {
             success: true,

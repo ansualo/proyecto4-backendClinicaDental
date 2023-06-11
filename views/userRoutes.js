@@ -9,7 +9,7 @@ const isAdmin = require('../middlewares/isAdmin');
 
 
 router.get('/patients', auth, isDoctor, userController.getAllPatients);
-router.get('/dentists', auth, isAdmin, userController.getAllDentists);
+router.get('/dentists', auth, userController.getAllDentists);
 
 router.get('/profile', auth, userController.getProfile);
 router.put('/profile', auth, userController.updateProfile);

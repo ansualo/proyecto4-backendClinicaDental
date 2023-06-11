@@ -69,9 +69,8 @@ userController.getAllDentists = async (req, res) => {
             where: {
                 role_id: 2
             },
-            attributes: {
-                exclude: ["password", "role_id"]
-            },
+            attributes:["id", "name", "surname", "collegiate_number"]
+    
         }
         // le añadimos a filter que, filtrando con op like, busque por nombre aunque solo escribamos una parte
         if (req.query.name) {
