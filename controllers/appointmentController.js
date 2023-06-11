@@ -1,4 +1,4 @@
-const { Appointment, User, Treatment} = require('../models');
+const { Appointment, User, Treatment } = require('../models');
 
 const appointmentController = {};
 
@@ -6,8 +6,25 @@ const appointmentController = {};
 appointmentController.getAllAppointments = async (req, res) => {
     try {
 
-        const appointments = await Appointment.findAll()
-
+        const appointments = await Appointment.findAll(
+            {
+                where: {
+                    user_id_1: req.userId
+                },
+                attributes: ["id", "date"],
+                include: [
+                    {
+                        model: Treatment,
+                        attributes: ["name", "price"]
+                    },
+                    {
+                        model: User,
+                        as: "doctor",
+                        attributes: ["name", "surname", "collegiate_number"]
+                    }
+                ]
+            },
+        );
         return res.json({
             succes: true,
             message: "Appointments retrieved succesfully",
@@ -27,20 +44,37 @@ appointmentController.getAllAppointments = async (req, res) => {
 
 appointmentController.getOneAppointment = async (req, res) => {
     try {
+        const patientId = req.userId
         const appointmentId = req.params.id
 
-        const appointment = await Appointment.findByPk( 
+        let appointment = await Appointment.findByPk(appointmentId)
+        
+        // comprobamos que la cita pertenece al paciente
+        if (appointment.user_id_1 !== patientId) {
+            return res.json(
+                {
+                    success: true,
+                    message: "Incorrect appointment"
+                }
+            )
+        }
+
+        appointment = await Appointment.findByPk(
             appointmentId,
             {
-                where : {
-                    user_id_1: req.userId
-                },
-                attributes:["id", "user_id_2", "date"],
-                include: [{
-                    model: Treatment,
-                    attributes: ["name", "price"]
-                }]
-            }, 
+                attributes: ["id", "date"],
+                include: [
+                    {
+                        model: Treatment,
+                        attributes: ["name", "price"]
+                    },
+                    {
+                        model: User,
+                        as: "doctor",
+                        attributes: ["name", "surname", "collegiate_number"]
+                    }
+                ]
+            },
         );
 
 
@@ -63,27 +97,41 @@ appointmentController.getOneAppointment = async (req, res) => {
 
 appointmentController.getPatientAppointments = async (req, res) => {
     try {
-        const appointments = await Appointment.findAll( 
+        const appointments = await Appointment.findAll(
             {
-                where : {
+                where: {
                     user_id_1: req.userId
                 },
-                attributes:["id", "user_id_2", "date"],
-                include: [{
-                    model: Treatment,
-                    attributes: ["name", "price"]
-                }]
-            }, 
+                attributes: ["id", "date"],
+                include: [
+                    {
+                        model: Treatment,
+                        attributes: ["name", "price"]
+                    },
+                    {
+                        model: User,
+                        as: "doctor",
+                        attributes: ["name", "surname", "collegiate_number"]
+                    }
+                ]
+            },
         );
 
+        if (appointments.length == 0) {
+            return res.status(404).json({
+                succes: true,
+                message: "No appointments have been made yet"
+            })
+        }
+
         return res.json(
-                {
-                    success: true,
-                    message: "Appointments retrieved succesfully",
-                    data: appointments
-                }
+            {
+                success: true,
+                message: "Appointments retrieved succesfully",
+                data: appointments
+            }
         )
-      
+
     } catch (error) {
         return res.status(500).json(
             {
@@ -100,21 +148,32 @@ appointmentController.getDoctorAppointments = async (req, res) => {
 
         const appointments = await Appointment.findAll(
             {
-                where : {
+                where: {
                     user_id_2: req.userId
                 },
-                attributes:['id', 'user_id_1', 'treatment_id','date'],
+                attributes: ["id", "date"],
+                include: [
+                    {
+                        model: Treatment,
+                        attributes: ["name", "price"]
+                    },
+                    {
+                        model: User,
+                        as: "patient",
+                        attributes: ["name", "surname", "phone"]
+                    }
+                ]
             }
         );
 
         return res.json(
-                {
-                    success: true,
-                    message: "Appointments retrieved",
-                    data: appointments
-                }
+            {
+                success: true,
+                message: "Appointments retrieved",
+                data: appointments
+            }
         )
-      
+
     } catch (error) {
         return res.status(500).json(
             {
@@ -125,7 +184,6 @@ appointmentController.getDoctorAppointments = async (req, res) => {
         )
     }
 }
-
 
 
 
@@ -140,7 +198,7 @@ appointmentController.createAppointment = async (req, res) => {
         const dentist = await User.findByPk(user_id_2);
 
         //comprobamos que el rol es el de dentista
-        if(dentist.role_id !== 2){ 
+        if (dentist.role_id !== 2) {
             return res.json(
                 {
                     success: true,
@@ -153,8 +211,8 @@ appointmentController.createAppointment = async (req, res) => {
                 user_id_1: patient,
                 user_id_2: user_id_2,
                 treatment_id: treatment_id,
-                date: date,
-            }
+                date: date ,
+            },
         )
         return res.json(
             {
@@ -163,7 +221,7 @@ appointmentController.createAppointment = async (req, res) => {
                 data: appointment
             }
         )
-      
+
     } catch (error) {
         return res.status(500).json(
             {
@@ -186,7 +244,7 @@ appointmentController.updateAppointment = async (req, res) => {
         const appointment = await Appointment.findByPk(appointmentId)
 
         // comprobamos que la cita pertenece al paciente
-        if (appointment.user_id_1 !== patientId){
+        if (appointment.user_id_1 !== patientId) {
             return res.json(
                 {
                     success: true,
@@ -199,7 +257,7 @@ appointmentController.updateAppointment = async (req, res) => {
         const dentist = await User.findByPk(user_id_2);
 
         //comprobamos que el rol es el de dentista
-        if(dentist.role_id !== 2){ 
+        if (dentist.role_id !== 2) {
             return res.json(
                 {
                     success: true,
@@ -223,9 +281,18 @@ appointmentController.updateAppointment = async (req, res) => {
         const newAppointment = await Appointment.findByPk(
             appointmentId,
             {
-                attributes: {
-                    exclude: ["createdAt", "updatedAt"]
+                attributes: ["id", "date"],
+                include: [
+                {
+                    model: Treatment,
+                    attributes: ["name", "price"]
                 },
+                {
+                    model: User,
+                    as: "doctor",
+                    attributes: ["name", "surname", "collegiate_number"]
+                }
+            ]
             }
         );
 
@@ -248,7 +315,7 @@ appointmentController.updateAppointment = async (req, res) => {
     }
 }
 
-appointmentController.deleteAppointment = async(req, res) => {
+appointmentController.deleteAppointment = async (req, res) => {
     try {
 
         const patientId = req.userId
@@ -258,7 +325,7 @@ appointmentController.deleteAppointment = async(req, res) => {
         const appointment = await Appointment.findByPk(appointmentId)
 
         // comprobamos que la cita pertenece al paciente
-        if (appointment.user_id_1 !== patientId){
+        if (appointment.user_id_1 !== patientId) {
             return res.json(
                 {
                     success: true,
@@ -272,7 +339,7 @@ appointmentController.deleteAppointment = async(req, res) => {
                 id: appointmentId
             }
         })
-        
+
         return res.json(
             {
                 success: true,
@@ -290,8 +357,6 @@ appointmentController.deleteAppointment = async(req, res) => {
         )
     }
 }
-
-
 
 
 
