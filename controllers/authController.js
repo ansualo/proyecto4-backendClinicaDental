@@ -24,6 +24,7 @@ authController.register = async (req, res) => {
             })
         }
 
+        // encriptamos la contraseña
         const newPassword = bcrypt.hashSync(password, 8);
 
         // comprueba que los campos no sean null o sean una string vacía 
@@ -78,6 +79,8 @@ authController.login = async (req, res) => {
                 }
             }
         );
+
+        // comprobamos que existe el usuario
         if(!user) {
             return res.json(
                 {
@@ -87,6 +90,7 @@ authController.login = async (req, res) => {
             )
         };
 
+        // comprobamos si la contraseña es correcta
         const isMatch = bcrypt.compareSync(password, user.password);
 
         if(!isMatch) {
@@ -98,6 +102,7 @@ authController.login = async (req, res) => {
             )
         };
 
+        // creammos el token 
         const token = jwt.sign(
             { 
                 userId: user.id,
