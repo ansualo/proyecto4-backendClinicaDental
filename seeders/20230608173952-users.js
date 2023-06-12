@@ -83,7 +83,7 @@ module.exports = {
         surname: "Suarez",
         email: "andrea@andrea.com",
         password: bcrypt.hashSync('andrea1234', 8),
-        phone: 644444444,
+        phone: 666666666,
         address: "C/ Denia 1", 
         date_of_birth: "1991-01-01",
         collegiate_number: null,

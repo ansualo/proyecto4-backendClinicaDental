@@ -11,6 +11,11 @@ appointmentController.getAllAppointments = async (req, res) => {
                 attributes: ["id", "date"],
                 include: [
                     {
+                        model: User,
+                        as: "patient",
+                        attributes: ["name", "surname"]
+                    },
+                    {
                         model: Treatment,
                         attributes: ["name", "price"]
                     },
@@ -74,10 +79,16 @@ appointmentController.getOneAppointment = async (req, res) => {
             },
         );
 
+        const user = await User.findByPk(
+            req.userId,
+            {
+                attributes: ["name", "surname", "email", "phone", "address", "date_of_birth"],
+            })
 
         return res.json({
             succes: true,
             message: "Appointment retrieved succesfully",
+            user: user,
             data: appointment
         })
 
@@ -121,10 +132,17 @@ appointmentController.getPatientAppointments = async (req, res) => {
             })
         }
 
+        const user = await User.findByPk(
+            req.userId,
+            {
+                attributes: ["name", "surname", "email", "phone", "address", "date_of_birth"],
+            })
+
         return res.json(
             {
                 success: true,
                 message: "Appointments retrieved succesfully",
+                user: user,
                 data: appointments
             }
         )
@@ -151,22 +169,32 @@ appointmentController.getDoctorAppointments = async (req, res) => {
                 attributes: ["id", "date"],
                 include: [
                     {
-                        model: Treatment,
-                        attributes: ["name", "price"]
-                    },
-                    {
                         model: User,
                         as: "patient",
                         attributes: ["name", "surname", "phone"]
+                    },
+                    {
+                        model: Treatment,
+                        attributes: ["name", "price"]
                     }
                 ]
             }
         );
 
+        const user = await User.findByPk(
+            req.userId,
+            {
+                attributes: {
+                    exclude: ["password", "role_id", "createdAt", "updatedAt"]
+                },
+                // attributes: ["name", "surname", "email", "phone", "address", "date_of_birth"],
+            })
+
         return res.json(
             {
                 success: true,
                 message: "Appointments retrieved",
+                user: user,
                 data: appointments
             }
         )
