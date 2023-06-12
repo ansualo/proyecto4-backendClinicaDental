@@ -22,7 +22,9 @@ En el siguiente proyecto se ha creado el backend para el sistema de gestión de 
 ## Sobre el proyecto
 Las funciones que se pueden realizar en la API serán tanto el registro de usuarios como su login. A la hora de hacer el registro se asignará el rol de paciente de forma automática, aunque si se trata de un dentista o administrador podremos cambiar su rol en la base de datos para que puedan acceder a diferentes endpoints.
 
-Una vez hecho el login como paciente podremos ver nuestro perfil de usuario y modificarlo. Podremos consultar los diferentes tratamientos que se ofrecen así como los diferentes dentistas de la clínica, y con esa información podremos crear una cita. También seremos capaces de modificarla o borrarla. Una vez creada la cita la podremos consultar de forma individual o, si tenemos más de una, de forma conjunta.
+Al hacer login recibiremos un token que deberemos insertar en los diferentes endpoints para poder tener acceso.
+
+Como paciente podremos ver nuestro perfil de usuario y modificarlo. Podremos consultar los diferentes tratamientos que se ofrecen así como los diferentes dentistas de la clínica, y con esa información podremos crear una cita. También seremos capaces de modificarla o borrarla. Una vez creada la cita la podremos consultar de forma individual o, si tenemos más de una, de forma conjunta.
 
 Los dentistas la clínica además pueden ver la lista de todos los pacientes y todas las citas a su nombre.
 
@@ -69,6 +71,7 @@ Tecnologías utilizadas:
 4. Ejecutamos las migraciones ` $ npx sequelize db:migrate `
 5. Ejecutamos los seeders ` $ npx sequelize db:seed:all ` 
 6. Conectamos el servidor` $ npm run dev ` 
+7. Ejecuta este archivo en Postman para habilitar el acceso a los endpoints del proyecto: [![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/27848134-3f1fbbc3-721e-418a-afd3-dfa1bddba337?action=collection%2Ffork&source=rip_markdown&collection-url=entityId%3D27848134-3f1fbbc3-721e-418a-afd3-dfa1bddba337%26entityType%3Dcollection%26workspaceId%3Dd21a4afd-fecf-498d-817a-74ca421ad0c8)
 
 
 ## Endpoints
