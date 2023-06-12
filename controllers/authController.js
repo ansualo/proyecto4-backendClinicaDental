@@ -6,21 +6,46 @@ const authController = {};
 
 authController.register = async (req, res) => {
     try {
-        if (req.body.password.length < 4){
-            return res.send('Password must be longer than 4 characters');
+
+        const { name, surname, email, password,  phone, address, date_of_birth} =  req.body;
+
+        // Esta expresión regular garantiza que la contraseña cumpla con los siguientes requisitos:
+        // Al menos una letra mayúscula.
+        // Al menos una letra minúscula.
+        // Al menos un número.
+        // Al menos un carácter especial (@, $, !, %, *, ?, &).
+        // Longitud entre 8 y 14 caracteres. 
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,14}$/;
+        const isValidPassword = passwordRegex.test(password)
+        if (!isValidPassword) {
+            return res.json({
+                success: true,
+                message: "Not a valid password"
+            })
         }
 
-        const newPassword = bcrypt.hashSync(req.body.password, 8);
+        const newPassword = bcrypt.hashSync(password, 8);
+
+        // comprueba que los campos no sean null o sean una string vacía 
+        if (!name || !surname || !email || !password || !phone || !address || !date_of_birth || 
+            name.trim() === '' || surname.trim() === '' || email.trim() === '' || password.trim() === '' || 
+            phone.trim() === '' || address.trim() === '' || date_of_birth.trim() === ''){
+
+            return res.json({
+                success: true,
+                message: "All fields must be completed"
+            })
+        }
 
         const newUser = await User.create(
             {
-                name: req.body.name,
-                surname: req.body.surname,
-                email: req.body.email,
+                name: name,
+                surname: surname,
+                email: email,
                 password: newPassword,
-                phone: req.body.phone,
-                address: req.body.address,
-                date_of_birth: req.body.date_of_birth,
+                phone: phone,
+                address: address,
+                date_of_birth: date_of_birth,
                 role_id: 1,
             }
         );
