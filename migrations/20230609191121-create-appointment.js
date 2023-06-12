@@ -30,6 +30,9 @@ module.exports = {
           key: "id"
         }
       },
+      price: {
+        type: Sequelize.INTEGER,
+      },
       date: {
         type: Sequelize.DATE
       },

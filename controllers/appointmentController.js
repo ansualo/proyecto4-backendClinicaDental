@@ -8,7 +8,7 @@ appointmentController.getAllAppointments = async (req, res) => {
 
         const appointments = await Appointment.findAll(
             {
-                attributes: ["id", "date"],
+                attributes: ["id", "date", "price"],
                 include: [
                     {
                         model: User,
@@ -17,7 +17,7 @@ appointmentController.getAllAppointments = async (req, res) => {
                     },
                     {
                         model: Treatment,
-                        attributes: ["name", "price"]
+                        attributes: ["name"]
                     },
                     {
                         model: User,
@@ -64,11 +64,11 @@ appointmentController.getOneAppointment = async (req, res) => {
         appointment = await Appointment.findByPk(
             appointmentId,
             {
-                attributes: ["id", "date"],
+                attributes: ["id", "date", "price"],
                 include: [
                     {
                         model: Treatment,
-                        attributes: ["name", "price"]
+                        attributes: ["name"]
                     },
                     {
                         model: User,
@@ -110,11 +110,11 @@ appointmentController.getPatientAppointments = async (req, res) => {
                 where: {
                     user_id_1: req.userId
                 },
-                attributes: ["id", "date"],
+                attributes: ["id", "date", "price"],
                 include: [
                     {
                         model: Treatment,
-                        attributes: ["name", "price"]
+                        attributes: ["name"]
                     },
                     {
                         model: User,
@@ -166,7 +166,7 @@ appointmentController.getDoctorAppointments = async (req, res) => {
                 where: {
                     user_id_2: req.userId
                 },
-                attributes: ["id", "date"],
+                attributes: ["id", "date", "price"],
                 include: [
                     {
                         model: User,
@@ -175,7 +175,7 @@ appointmentController.getDoctorAppointments = async (req, res) => {
                     },
                     {
                         model: Treatment,
-                        attributes: ["name", "price"]
+                        attributes: ["name"]
                     }
                 ]
             }
@@ -231,11 +231,16 @@ appointmentController.createAppointment = async (req, res) => {
                 }
             )
         };
+
+        // buscamos el tratamiento en la base de datos para poder añadir de forma automatica el precio
+        const treatment = await Treatment.findByPk(treatment_id);
+
         appointment = await Appointment.create(
             {
                 user_id_1: patient,
                 user_id_2: user_id_2,
                 treatment_id: treatment_id,
+                price: treatment.price,
                 date: date ,
             },
         )
@@ -291,10 +296,14 @@ appointmentController.updateAppointment = async (req, res) => {
             )
         };
 
+        // buscamos el tratamiento en la base de datos para poder añadir de forma automatica el precio
+        const treatment = await Treatment.findByPk(treatment_id);
+
         updatedAppointment = await Appointment.update(
             {
                 user_id_2: user_id_2,
                 treatment_id: treatment_id,
+                price: treatment.price,
                 date: date,
             },
             {
@@ -306,11 +315,11 @@ appointmentController.updateAppointment = async (req, res) => {
         const newAppointment = await Appointment.findByPk(
             appointmentId,
             {
-                attributes: ["id", "date"],
+                attributes: ["id", "date", "price"],
                 include: [
                 {
                     model: Treatment,
-                    attributes: ["name", "price"]
+                    attributes: ["name"]
                 },
                 {
                     model: User,

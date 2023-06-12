@@ -9,6 +9,7 @@ module.exports = {
         user_id_1: 1,
         user_id_2: 4,
         treatment_id: 1,
+        price: 25,
         date: "2023-06-12 18:00:00",
         createdAt: new Date(),
         updatedAt: new Date()
@@ -18,6 +19,7 @@ module.exports = {
         user_id_1: 1,
         user_id_2: 4,
         treatment_id: 3,
+        price: 50,
         date: "2023-06-15 10:00:00",
         createdAt: new Date(),
         updatedAt: new Date()
@@ -27,6 +29,7 @@ module.exports = {
         user_id_1: 2,
         user_id_2: 5,
         treatment_id: 9,
+        price: 400,
         date: "2023-06-25 15:30:00",
         createdAt: new Date(),
         updatedAt: new Date()
@@ -36,6 +39,7 @@ module.exports = {
         user_id_1: 3,
         user_id_2: 5,
         treatment_id: 7,
+        price: 2500,
         date: "2023-06-27 09:30:00",
         createdAt: new Date(),
         updatedAt: new Date()
