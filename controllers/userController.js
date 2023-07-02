@@ -64,12 +64,14 @@ userController.getAllPatients = async (req, res) => {
 
 userController.getAllDentists = async (req, res) => {
     try {
-        // filter es un objeto vacio con dos propiedades, filtra solo por los dentistas y excluye el passport y role_id
+        // filter es un objeto vacio con dos propiedades, filtra solo por los dentistas
         const filter = {
             where: {
                 role_id: 2
             },
-            attributes:["id", "name", "surname", "collegiate_number"]
+            attributes: {
+                exclude: ["password", "role_id", "createdAt", "updatedAt"]
+            },
     
         }
         // le añadimos a filter que, filtrando con op like, busque por nombre aunque solo escribamos una parte
@@ -121,7 +123,7 @@ userController.getProfile = async (req, res)=> {
             userId, 
             {
                 attributes: {
-                    exclude: ["id","password", "role_id", "createdAt", "updatedAt"]
+                    exclude: ["id", "role_id", "password", "createdAt", "updatedAt"]
                 },
             }
         ); 

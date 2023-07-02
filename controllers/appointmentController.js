@@ -13,7 +13,7 @@ appointmentController.getAllAppointments = async (req, res) => {
                     {
                         model: User,
                         as: "patient",
-                        attributes: ["name", "surname"]
+                        attributes: ["id", "name", "surname"]
                     },
                     {
                         model: Treatment,
@@ -266,22 +266,22 @@ appointmentController.createAppointment = async (req, res) => {
 appointmentController.updateAppointment = async (req, res) => {
     try {
 
-        const patientId = req.userId
+        // const patientId = req.userId
         const appointmentId = req.params.id
         const { user_id_2, treatment_id, date } = req.body
 
         // buscamos la cita en la base de datos
         const appointment = await Appointment.findByPk(appointmentId)
 
-        // comprobamos que la cita pertenece al paciente
-        if (appointment.user_id_1 !== patientId) {
-            return res.json(
-                {
-                    success: true,
-                    message: "Incorrect appointment"
-                }
-            )
-        }
+        // comprobamos que la cita pertenece al paciente (comentado para que el admin tenga acceso en el front)
+        // if (appointment.user_id_1 !== patientId) {
+        //     return res.json(
+        //         {
+        //             success: true,
+        //             message: "Incorrect appointment"
+        //         }
+        //     )
+        // }
 
         // buscamos el dentista en la base de datos
         const dentist = await User.findByPk(user_id_2);
@@ -352,21 +352,22 @@ appointmentController.updateAppointment = async (req, res) => {
 appointmentController.deleteAppointment = async (req, res) => {
     try {
 
-        const patientId = req.userId
+        // const patientId = req.userId
         const appointmentId = req.params.id
 
         // buscamos la cita en la base de datos
         const appointment = await Appointment.findByPk(appointmentId)
 
-        // comprobamos que la cita pertenece al paciente
-        if (appointment.user_id_1 !== patientId) {
-            return res.json(
-                {
-                    success: true,
-                    message: "Incorrect appointment"
-                }
-            )
-        }
+
+        // comprobamos que la cita pertenece al paciente (comentado para que el admin pueda borrar las citas en el front)
+        // if (appointment.user_id_1 !== patientId) {
+        //     return res.json(
+        //         {
+        //             success: true,
+        //             message: "Incorrect appointment"
+        //         }
+        //     )
+        // }
 
         const deletedAppointment = await Appointment.destroy({
             where: {

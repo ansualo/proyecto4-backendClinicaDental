@@ -241,7 +241,7 @@ Tecnologías utilizadas:
 
             DELETE localhost:3000/roles/:id
 
-    - ...
+
 </details>
 
 
