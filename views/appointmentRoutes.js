@@ -7,6 +7,7 @@ const isDoctor = require('../middlewares/isDoctor');
 
 router.get('/all', auth, appointmentController.getAllAppointments);
 router.get('/patient/:id', auth, appointmentController.getOneAppointment);
+router.get('/byname', auth,  appointmentController.getAppointmentByName);
 router.get('/patient', auth, appointmentController.getPatientAppointments);
 router.get('/doctor', auth, isDoctor, appointmentController.getDoctorAppointments);
 router.post('/', auth, appointmentController.createAppointment);

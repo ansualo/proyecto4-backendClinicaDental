@@ -1,5 +1,5 @@
 const { Appointment, User, Treatment } = require('../models');
-
+const { Op } = require('sequelize');
 const appointmentController = {};
 
 
@@ -50,7 +50,7 @@ appointmentController.getOneAppointment = async (req, res) => {
         const appointmentId = req.params.id
 
         let appointment = await Appointment.findByPk(appointmentId)
-        
+
         // comprobamos que la cita pertenece al paciente
         if (appointment.user_id_1 !== patientId) {
             return res.json(
@@ -97,6 +97,63 @@ appointmentController.getOneAppointment = async (req, res) => {
             {
                 success: false,
                 message: "Appointment cannot be retrieved",
+                error: error.message
+            }
+        )
+    }
+}
+
+appointmentController.getAppointmentByName = async (req, res) => {
+
+    try {
+
+        const patientName = req.query.name
+
+        const patient = await User.findOne(
+            {
+                where: { name: patientName },
+                attributes: ["id"],
+            }
+        );
+
+        const patientId = patient.id
+
+        const appointments = await Appointment.findAll(
+            {
+                where: {
+                    user_id_1: patientId
+                },
+                attributes: ["id", "date", "price"],
+                include: [
+                    {
+                        model: User,
+                        as: "patient",
+                        attributes: ["id", "name", "surname"]
+                    },
+                    {
+                        model: Treatment,
+                        attributes: ["name"]
+                    },
+                    {
+                        model: User,
+                        as: "doctor",
+                        attributes: ["name", "surname", "collegiate_number"]
+                    }
+                ]
+            },
+        );
+
+        return res.json({
+            succes: true,
+            message: "Appointments retrieved succesfully",
+            data: appointments
+        })
+
+    } catch (error) {
+        return res.status(500).json(
+            {
+                success: false,
+                message: "Appointments cannot be retrieved",
                 error: error.message
             }
         )
@@ -241,7 +298,7 @@ appointmentController.createAppointment = async (req, res) => {
                 user_id_2: user_id_2,
                 treatment_id: treatment_id,
                 price: treatment.price,
-                date: date ,
+                date: date,
             },
         )
         return res.json(
@@ -317,16 +374,16 @@ appointmentController.updateAppointment = async (req, res) => {
             {
                 attributes: ["id", "date", "price"],
                 include: [
-                {
-                    model: Treatment,
-                    attributes: ["name"]
-                },
-                {
-                    model: User,
-                    as: "doctor",
-                    attributes: ["name", "surname", "collegiate_number"]
-                }
-            ]
+                    {
+                        model: Treatment,
+                        attributes: ["name"]
+                    },
+                    {
+                        model: User,
+                        as: "doctor",
+                        attributes: ["name", "surname", "collegiate_number"]
+                    }
+                ]
             }
         );
 
